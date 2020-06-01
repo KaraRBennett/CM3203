@@ -1,0 +1,19 @@
+# Baselines
+datasets/2019/baselines/
+datasets/2020/baselines/
+
+# 2019 dataset files
+datasets/2019/datasets-v2/datasets/dev-articles/
+datasets/2019/datasets-v2/datasets/removedItems/
+datasets/2019/datasets-v2/datasets/train-articles/
+datasets/2019/datasets-v2/datasets/train-labels-FLC/
+datasets/2019/datasets-v2/datasets/train-labels-SLC/
+
+# 2020 dataset files
+datasets/2020/datasets/dev-articles/
+datasets/2020/datasets/dev-labels-task1-span-identification/
+datasets/2020/datasets/dev-labels-task2-technique-classification/
+datasets/2020/datasets/test-articles
+datasets/2020/datasets/train-articles/
+datasets/2020/datasets/train-labels-task1-span-identification/
+datasets/2020/datasets/train-labels-task2-technique-classification/
