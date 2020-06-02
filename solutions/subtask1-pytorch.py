@@ -1,9 +1,11 @@
+import pytorchFiles.models as models
 import readCorpus.binaryClassification as readCorpus
+
 
 from helpers.processTime import processTime
 from pytorchFiles.training import train, testAccuracy
 from pytorchFiles.subtask1.evaluate import unseenData
-from pytorchFiles.model import RNN
+from pytorchFiles.modelSelection import defineModel
 
 import torch
 import torchtext
@@ -19,10 +21,21 @@ cuda = torch.device('cuda:0')
 torch.cuda.empty_cache()
 
 
-#
-evaluateUnseenData = True
-filesToEvaluate = '../datasets/2019/datasets-v2/datasets/train-articles'
-trainingIterations = 10
+# SET PARAMETERS
+
+# Evaluate a data set not used for training
+evaluateUnseenData = False
+filesToEvaluate = '../datasets/2019/datasets-v3/datasets/test-articles'
+
+# Hyperparameters
+trainingIterations = 1
+batchSize = 256
+
+# Model
+rnnClass = 'LSTMDropout'
+embeddingDimensions = 100
+hiddenDimensions = 256
+dropout = 0.05
 
 
 #Set to True on first run to create necessary data files
@@ -30,8 +43,8 @@ createCSVs = False
 
 if createCSVs:
     print('Creating data files')    
-    trainingCorpusText = readCorpus.readText('../datasets/2019/datasets-v2/datasets/train-articles')
-    trainingCorpusLabels = readCorpus.readLabels('../datasets/2019/datasets-v2/datasets/train-labels-SLC')
+    trainingCorpusText = readCorpus.readText('../datasets/2019/datasets-v3/datasets/train-articles')
+    trainingCorpusLabels = readCorpus.readLabels('../datasets/2019/datasets-v3/datasets/train-labels-SLC')
 
     trainText, testText, trainLabels, testLabels = train_test_split(
         trainingCorpusText['text'],
@@ -91,20 +104,15 @@ print(LABEL.vocab.stoi)
 
 trainIterator, testIterator = torchtext.data.BucketIterator.splits(
     (trainData, testData),
-    batch_size = 256,
+    batch_size = batchSize,
     sort_key = lambda x: len(x.text),
     sort_within_batch = False,
     device=cuda
 )
 
 
-model = RNN(
-    inputDimensions =  len(TEXT.vocab),
-    embeddingDimensions = 100,
-    hiddenDimensions = 256,
-    outputDimensions = 1
-)
-model=torch.nn.DataParallel(model, device_ids=[0])
+model = defineModel(rnnClass, len(TEXT.vocab), embeddingDimensions, hiddenDimensions, dropout)
+
 
 optimiser = torch.optim.Adam(model.parameters(), lr = 1e-6)
 lossFunction = torch.nn.BCEWithLogitsLoss()

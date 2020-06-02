@@ -43,9 +43,8 @@ def decisionTree(tuning=False, parameters=None):
             param_grid = [{
                 'criterion' : ['gini', 'entropy'],
                 'splitter' : ['best', 'random'],
-                'max_depth': [5, 10, 15, 20, 25],
-                'max_features' : [5, 10, 15, 20, 25],
-                'max_leaf_nodes' : [1, 2, 3, 4, 5] 
+                'max_depth': [10, 50, 100, 500, 1000, 5000, 10000],
+                'max_features' : [10, 50, 100, 500, 1000]
             }],
             scoring = 'f1',
             n_jobs = -1
@@ -83,10 +82,11 @@ def neuralNetwork(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                'hidden_layer_sizes' : [(100, )],
-                'max_iter' : [100],
+                'hidden_layer_sizes' : [(100, ), (100, 50, ), (100, 50, 20, ), (100, 50, 20, 10, )],
                 'activation' : ['relu', 'identity', 'tanh', 'relu'],
-                'solver' : ['lbfgs', 'sgd', 'adam']
+                'solver' : ['lbfgs', 'sgd', 'adam'],
+                'alpha' : [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6],
+
             }],
             scoring = 'f1',
             n_jobs = -1
@@ -109,8 +109,11 @@ def randomForestClassifier(tuning=False, parameters=None):
 
         gridSearch = GridSearchCV(
             estimator = model,
-            para_grid = [{
-
+            param_grid = [{
+                'criterion' : ['gini', 'entropy'],
+                'max_depth': [10, 50, 100, 500, 1000, 5000, 10000],
+                'max_features' : [10, 50, 100, 500, 1000],
+                'n_estimators' : [10, 50, 100, 500, 1000]
             }],
             scoring = 'f1',
             n_jobs = -1
@@ -134,9 +137,9 @@ def svc(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                "C": [1],
+                "C": [0.001, 0.01, 0.1, 1, 10, 100, 1000],
                 "kernel": ['linear', 'poly', 'rbf', 'sigmoid'],
-                "max_iter": [100],
+                "max_iter": [100, 500, 1000, 5000, 10000],
                 "decision_function_shape" : ['ovo', 'ovr']
             }],
             scoring = 'f1',

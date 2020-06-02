@@ -28,7 +28,7 @@ modelTuning = True
 
 # Evaluate a dataset not used for training
 evaluateUnseenData = False
-filesToEvaluate = ('../datasets/2019/datasets-v2/datasets/dev-articles')
+filesToEvaluate = '../datasets/2019/datasets-v2/datasets/train-articles'
 
 # If the model 
 isTree = False
@@ -106,7 +106,7 @@ else:
         print('Performing Evaluation')
         start = process_time()
         data = readCorpus.readText(filesToEvaluate)
-        evaluate.unseenData(model, vectoriser, data)
+        evaluate.unseenData(model, vectoriser, data, outputFile='DefaultSVC.txt')
         finish = process_time()
         print('Evaluation completed in: {0:.2f}'.format(finish-start))
 
