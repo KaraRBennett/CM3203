@@ -39,6 +39,6 @@ def unseenData(model, vocab, data, outputFile='evaluation.txt'):
 
     print(len(output))
 
-    file = open(outputFile, 'w')
+    file = open('results/subtask1/pytorch-' + outputFile, 'w')
     file.writelines(output)
     file.close() 
