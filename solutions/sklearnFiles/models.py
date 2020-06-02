@@ -134,9 +134,9 @@ def svc(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                "C": [1, 2, 3, 4, 5],
+                "C": [1],
                 "kernel": ['linear', 'poly', 'rbf', 'sigmoid'],
-                "max_iter": [100, 500, 1000],
+                "max_iter": [100],
                 "decision_function_shape" : ['ovo', 'ovr']
             }],
             scoring = 'f1',
