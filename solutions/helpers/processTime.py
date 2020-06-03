@@ -14,4 +14,4 @@ def processTime(start = None):
         else:
             minutes = duration // 60
             seconds = duration % 60
-            return '{0}min {1:.0f}s'.format(minutes, seconds)
+            return '{0:.0f}min {1:.0f}s'.format(minutes, seconds)
