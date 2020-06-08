@@ -3,7 +3,6 @@ from helpers.processTime import processTime
 from pandas import DataFrame
 from sklearn.metrics import f1_score
 
-
 # Method to train a given model using K Folds
 def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
     start = processTime()
@@ -15,6 +14,7 @@ def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
         print('Performing folded train iteration {0}'.format(i + 1))
         trainFeatures = vectoriser.fit_transform(foldedTrain['text'][i])
         testFeatures = vectoriser.transform(foldedTest['text'][i])
+
         model = model.fit(trainFeatures, foldedTrain['labels'][i])
 
         testPrediction = model.predict(testFeatures)
@@ -31,46 +31,33 @@ def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
     print('\nTime to train: {0}\n\n'.format(processTime(start)))
     
 
-    return model, foldedScore, testScore
+    return model, vectoriser, foldedScore, testScore
 
 
 # Method that tunes an implemented GridSearchCV object (model) using K Folds
-def tuneModel(model, vectoriser, foldedTrain, writeResults=True):
+def tuneModel(model, vectoriser, trainCorpus, writeResults=True):
+    print('Tuning model\n')
     start = processTime()
 
-    foldedMetrics = []
-
-    # Train model on each K Fold
-    for i in range(len(foldedTrain['text'])):
-        print('\nPerforming folded train iteration {0}'.format(i + 1))
-        trainFeatures = vectoriser.fit_transform(foldedTrain['text'][i])
-        model = model.fit(trainFeatures, foldedTrain['labels'][i])
-
-        foldedMetrics.append([])
-        foldedMetrics[i].append(model.best_score_)
-        foldedMetrics[i].append(model.best_params_)
-
-        print('Current time elapsed: {0}'.format(processTime(start)))
+    trainFeatures = vectoriser.fit_transform(trainCorpus['text'])
+    model = model.fit(trainFeatures, trainCorpus['labels'])
     
-    print('\nTime to train: {0}\n\n'.format(processTime(start)))
+    print('\nTuning complete')
+    print('Time to tune: {0}\n\n'.format(processTime(start)))
 
 
     # Print results summary to console
-    for i in range(len(foldedMetrics)):
-        print('Iteration {0} Results\n-------------------'.format(i + 1))
-        print('Best F₁ Score: {0:.4f}'.format(foldedMetrics[i][0]))
-        print('Best Estimator: {0}'.format(foldedMetrics[i]))
+    print('Best F₁ Score: {0:.4f}'.format(model.best_score_))
         
-        print('Best Paramteres: -')
-        for parameter in foldedMetrics[i][1]:
-            print('* {0}: {1}'.format(parameter, foldedMetrics[i][1][parameter]))
-        
-        print('\n')
-
+    print('Best Paramteres: -')
+    bestParameters = model.best_params_
+    for parameter in bestParameters:
+        print('* {0}: {1}'.format(parameter, bestParameters[parameter]))
+    print('\n')
     
     # Write comprehensive results of final model to csv file
     if writeResults:
-        filename = 'results/subtask1/GridSearch-' + model.estimator.__class__.__name__ + '.csv'
+        filename = 'results/subtask1/GridSearch-{0}-{1}.csv'.format(model.estimator.__class__.__name__, type(vectoriser).__name__)
         filedata = DataFrame(data=model.cv_results_)
         filedata.to_csv(filename)
         print('Full results written to: ' + filename)
