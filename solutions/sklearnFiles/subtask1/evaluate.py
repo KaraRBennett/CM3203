@@ -1,6 +1,6 @@
 from translateLabels.translateBCLabels import Int2Word
 
-def unseenData(model, vectoriser, data, outputFile='Evaluation.txt'):
+def unseenData(model, vectoriser, data, outputFile='Evaluation'):
     output = []
 
     vectorisedData = vectoriser.transform(data['text'])
@@ -22,9 +22,8 @@ def unseenData(model, vectoriser, data, outputFile='Evaluation.txt'):
             Int2Word(model.predict(vectorisedData[i]))
         )
         output.append(outputString)
-    
-    print(len(output))
-    
-    file = open('results/subtask1/sklearn-' + outputFile, 'w')
+
+    file = open(f'results/subtask1/sklearn-{outputFile}.txt', 'w')
     file.writelines(output)
     file.close()
+    print('\nEvaluation file sklearn-{0} can be found in results/subtask1/'.format(outputFile))
