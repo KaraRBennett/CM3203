@@ -8,7 +8,6 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 
-
 def logisticRegression(tuning=False, parameters=None):
     if tuning:
         model = LogisticRegression()
@@ -16,11 +15,13 @@ def logisticRegression(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                'C' : [1, 2, 3, 4, 5],
-                'solver' : ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'] 
+                'C': [0.001, 0.01, 0.1, 1, 10],
+                'solver' : ['newton-cg', 'lbfgs', 'liblinear'],
+                'random_state' : [0]
             }],
             scoring = 'f1',
-            n_jobs = -1
+            n_jobs = -1,
+            verbose=1
         )
         return gridSearch
     
@@ -43,11 +44,13 @@ def decisionTree(tuning=False, parameters=None):
             param_grid = [{
                 'criterion' : ['gini', 'entropy'],
                 'splitter' : ['best', 'random'],
-                'max_depth': [10, 50, 100, 500, 1000, 5000, 10000],
-                'max_features' : [10, 50, 100, 500, 1000]
+                'max_depth': [10, 100, 1000],
+                'max_features' : [10, 100, 1000],
+                'random_state' : [0]
             }],
             scoring = 'f1',
-            n_jobs = -1
+            n_jobs = -1,
+            verbose=1
         )
         return gridSearch
     
@@ -82,14 +85,15 @@ def neuralNetwork(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                'hidden_layer_sizes' : [(100, ), (100, 50, ), (100, 50, 20, ), (100, 50, 20, 10, )],
-                'activation' : ['relu', 'identity', 'tanh', 'relu'],
+                'hidden_layer_sizes' : [(100, ), (100, 50, ), (100, 50, 20, )],
+                'activation' : ['relu', 'tanh'],
                 'solver' : ['lbfgs', 'sgd', 'adam'],
-                'alpha' : [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6],
-
+                'alpha' : [1e-1, 1e-2, 1e-3],
+                'random_state' : [0]
             }],
             scoring = 'f1',
-            n_jobs = -1
+            n_jobs = -1,
+            verbose=1
         )
         return gridSearch
     
@@ -111,12 +115,14 @@ def randomForestClassifier(tuning=False, parameters=None):
             estimator = model,
             param_grid = [{
                 'criterion' : ['gini', 'entropy'],
-                'max_depth': [10, 50, 100, 500, 1000, 5000, 10000],
-                'max_features' : [10, 50, 100, 500, 1000],
-                'n_estimators' : [10, 50, 100, 500, 1000]
+                'max_depth': [10, 100, 1000],
+                'max_features' : [10, 100, 1000],
+                'n_estimators' : [10, 100, 1000],
+                'random_state' : [0]
             }],
             scoring = 'f1',
-            n_jobs = -1
+            n_jobs = -1,
+            verbose=1
         )
         return gridSearch
     
@@ -137,13 +143,14 @@ def svc(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                "C": [0.001, 0.01, 0.1, 1, 10, 100, 1000],
-                "kernel": ['linear', 'poly', 'rbf', 'sigmoid'],
-                "max_iter": [100, 500, 1000, 5000, 10000],
-                "decision_function_shape" : ['ovo', 'ovr']
+                'C': [0.001, 0.01, 0.1, 1, 10],
+                'kernel': ['linear', 'rbf', 'sigmoid'],
+                'max_iter': [100, 1000, 10000],
+                'random_state' : [0]
             }],
             scoring = 'f1',
-            n_jobs = -1
+            n_jobs = -1,
+            verbose=1
         )
         return gridSearch
     
