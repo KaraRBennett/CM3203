@@ -32,7 +32,7 @@ def runScenario(scenario):
         if scenario['evaluateUnseenData'] == True:
             evaluateUnseenData(model, vectoriser, scenario['filesToEvaluate'], scenario['evaluationFilename'])
 
-        if type(model).__name__ == "DecisionTreeClassifier":
+        if type(model).__name__ == "DecisionTreeClassifier" and scenario['treeGraphFilename'] != None:
             captureDecisionTreeGraph(model, vectoriser, scenario['treeGraphFilename'])
     
 
@@ -56,7 +56,7 @@ def loadAndSplitData(textFilesDirectory, labelFilesDirectory):
 
 def kFoldSplit(trainText, trainLabels):
     kFoldIndexes = []
-    kf = KFold(n_splits = 5, random_state = 5, shuffle=True)
+    kf = KFold(n_splits = 3, random_state = 5, shuffle=True)
     for i in kf.split(trainText):
         kFoldIndexes.append(i)
 
@@ -114,7 +114,8 @@ def captureDecisionTreeGraph(model, vectoriser, treeGraphFilename):
         feature_names=vectoriser.get_feature_names(),
         filled=True,
         rounded=True,
-        special_characters=True
+        special_characters=True,
+        class_names=['non-propaganda', 'propaganda']
     )
     graph = graphviz.Source(treeData)
     graph.render('results/subtask1/' + treeGraphFilename)
