@@ -1,25 +1,40 @@
 from translateLabels.translateBCLabels import Int2Word
 
 def unseenData(model, vectoriser, data, outputFile='Evaluation'):
-    output = []
+    performGlovePreprocessing(vectoriser, data)    
+    features = vectoriser.transform(data['text'])
+    predictions = model.predict(features)
 
-    vectorisedData = vectoriser.transform(data['text'])
+    assertionError = 'Mismatched length of model predictions {0} and input data {1}'.format(len(predictions), len(data['text']))
+    assert len(predictions) == len(data['text']), assertionError
 
-    currentArticleID = data['articleID'][0]
+    createOutputFile(data['articleID'], predictions, outputFile)
+    
+
+def performGlovePreprocessing(vectoriser, data):
+    if vectoriser.__class__.__name__ == 'EmbeddingTransformer':
+        for i in range(len(data['text'])):
+            data['text'][i] = (data['text'][i]).lower()
+
+
+def createOutputFile(dataIDs, predictions, outputFile):
+    output = [] 
+    currentID = dataIDs[0]
     sentenceNo = 0
 
-    for i in range(len(data['text'])):
 
-        if data['articleID'][i] == currentArticleID:
+    for i in range(len(predictions)):
+
+        if dataIDs[i] == currentID:
             sentenceNo += 1
         else:
-            currentArticleID = data['articleID'][i]
+            currentID = dataIDs[i]
             sentenceNo = 1
         
         outputString = '{0}\t{1}\t{2}\n'.format(
-            currentArticleID,
+            currentID,
             sentenceNo,
-            Int2Word(model.predict(vectorisedData[i]))
+            Int2Word(predictions[i])
         )
         output.append(outputString)
 
