@@ -3,6 +3,7 @@ from helpers.processTime import processTime
 from pandas import DataFrame
 from sklearn.metrics import f1_score
 
+
 # Method to train a given model using K Folds
 def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
     start = processTime()
@@ -10,17 +11,10 @@ def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
     foldedScore = []
 
     # Train model on each set of the K Fold and capture the F₁ score
-    for i in range(len(foldedTrain['text'])):
-        print('Performing folded train iteration {0}'.format(i + 1))
-        trainFeatures = vectoriser.fit_transform(foldedTrain['text'][i])
-        testFeatures = vectoriser.transform(foldedTest['text'][i])
-
-        model = model.fit(trainFeatures, foldedTrain['labels'][i])
-
-        testPrediction = model.predict(testFeatures)
-        score = f1_score(foldedTest['labels'][i], testPrediction)
-
-        foldedScore.append(score)
+    if vectoriser.__class__.__name__ == 'EmbeddingTransformer':
+        trainWithEmbeddingTransformer(model, vectoriser, foldedTrain, foldedTest, foldedScore)
+    else:
+        trainWithSklearnVectoriser(model, vectoriser, foldedTrain, foldedTest, foldedScore)
     
     # Print results from testing
     print('\nTesting model against test set')
@@ -34,12 +28,46 @@ def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
     return model, vectoriser, foldedScore, testScore
 
 
+def trainWithSklearnVectoriser(model, vectoriser, foldedTrain, foldedTest, foldedScore):
+    for i in range(len(foldedTrain['text'])):
+        print('Performing folded train iteration {0}'.format(i + 1))
+        trainFeatures = vectoriser.fit_transform(foldedTrain['text'][i])
+        testFeatures = vectoriser.transform(foldedTest['text'][i])
+
+        model = model.fit(trainFeatures, foldedTrain['labels'][i])
+
+        testPrediction = model.predict(testFeatures)
+        score = f1_score(foldedTest['labels'][i], testPrediction)
+
+        foldedScore.append(score)
+
+
+def trainWithEmbeddingTransformer(model, vectoriser, foldedTrain, foldedTest, foldedScore):
+    for i in range(len(foldedTrain['text'])):
+        print('Performing folded train iteration {0}'.format(i + 1))
+
+        for j in range(len(foldedTrain['text'][i])):
+            foldedTrain['text'][i][j] = (foldedTrain['text'][i][j]).lower()
+      
+        for j in range(len(foldedTest['text'][i])):
+            foldedTest['text'][i][j] = (foldedTest['text'][i][j]).lower()
+        
+        trainFeatures = vectoriser.transform(foldedTrain['text'][i])
+        testFeatures = vectoriser.transform(foldedTest['text'][i])
+
+        model = model.fit(trainFeatures, foldedTrain['labels'][i])
+        testPrediction = model.predict(testFeatures)
+
+        score = f1_score(foldedTest['labels'][i], testPrediction)
+        foldedScore.append(score)   
+
+
 # Method that tunes an implemented GridSearchCV object (model) using K Folds
 def tuneModel(model, vectoriser, trainCorpus, writeResults=True):
     print('Tuning model\n')
     start = processTime()
 
-    trainFeatures = vectoriser.fit_transform(trainCorpus['text'])
+    trainFeatures = selectTransformMethod(vectoriser, trainCorpus['text'])
     model = model.fit(trainFeatures, trainCorpus['labels'])
     
     print('\nTuning complete')
@@ -61,3 +89,13 @@ def tuneModel(model, vectoriser, trainCorpus, writeResults=True):
         filedata = DataFrame(data=model.cv_results_)
         filedata.to_csv(filename)
         print('Full results written to: ' + filename)
+
+
+def selectTransformMethod(vectoriser, transformObject):
+    if vectoriser.__class__.__name__ == 'EmbeddingTransformer':
+        for i in range(len(transformObject)):
+            transformObject[i] = (transformObject[i]).lower()
+        return vectoriser.transform(transformObject) 
+
+    else:
+        return vectoriser.fit_transform(transformObject)
