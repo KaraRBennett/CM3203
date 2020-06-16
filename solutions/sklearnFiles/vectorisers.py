@@ -1,21 +1,46 @@
+import sklearnFiles.stemVectorisers as sv
+
+from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-#from zeugma.embeddings import EmbeddingTransformer
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from zeugma.embeddings import EmbeddingTransformer
 
 
-def caseSensitiveCount():
-    vectoriser = CountVectorizer(lowercase=False, ngram_range=(1, 2))
-    return vectoriser
 
+
+# Count Vectorisers
 
 def defaultCount():
-    vectoriser = CountVectorizer()
-    return vectoriser
+    vectoiser = CountVectorizer(lowercase=False, stop_words='english', ngram_range=(1, 2))
+    return vectoiser
 
+
+# Tfidf Vectorisers
 
 def defaultTfidf():
-    vectoriser = TfidfVectorizer()
+    vectoiser = TfidfVectorizer(lowercase=False, stop_words='english', ngram_range=(1, 2))
+    return vectoiser
+
+
+# Advanced Vectorisers
+
+def decompositionVectorisor(vectoriser):
+    decomposer = TruncatedSVD()
+    preproccessor = StandardScaler()
+    pipeline = make_pipeline(vectoriser, decomposer, preproccessor)
+    return pipeline
+
+
+def stemmedCount():
+    vectoriser = sv.stemmedCount()
     return vectoriser
+
+
+def stemmedTfidf():
+    vectoiser = sv.stemmedTfidf()
+    return vectoiser
 
 
 def gloveWordEmbeddings():
