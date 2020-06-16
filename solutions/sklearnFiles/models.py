@@ -8,33 +8,6 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 
-def logisticRegression(tuning=False, parameters=None):
-    if tuning:
-        model = LogisticRegression()
-
-        gridSearch = GridSearchCV(
-            estimator = model,
-            param_grid = [{
-                'C': [0.001, 0.01, 0.1, 1, 10],
-                'solver' : ['newton-cg', 'lbfgs', 'liblinear'],
-                'random_state' : [0]
-            }],
-            scoring = 'f1',
-            n_jobs = -1,
-            verbose=1
-        )
-        return gridSearch
-    
-    else:
-        model = None
-        if parameters:
-            model = LogisticRegression(**parameters)
-        else:
-            model = LogisticRegression()
-        
-        return model
-
-
 def decisionTree(tuning=False, parameters=None):
     if tuning:
         model = DecisionTreeClassifier()
@@ -45,29 +18,69 @@ def decisionTree(tuning=False, parameters=None):
                 'criterion' : ['gini', 'entropy'],
                 'splitter' : ['best', 'random'],
                 'max_depth': [10, 100, 1000],
-                'max_features' : [10, 100, 1000],
+                'max_features' : [0.1, 0.25, 0.5],
                 'random_state' : [0]
             }],
             scoring = 'f1',
             n_jobs = -1,
-            verbose=1
+            verbose = 1
         )
         return gridSearch
     
     else:
         model = None
         if parameters:
+            setDefaultRandomState(parameters)
             model = DecisionTreeClassifier(**parameters)
         else:
-            model = DecisionTreeClassifier()
+            model = DecisionTreeClassifier(random_state=0)
+        
+        return model
+        
+
+def logisticRegression(tuning=False, parameters=None):
+    if tuning:
+        model = LogisticRegression()
+
+        gridSearch = GridSearchCV(
+            estimator = model,
+            param_grid = [{
+                'C': [0.001, 0.01, 0.1, 1, 5, 10, 15, 20, 25],
+                'solver' : ['newton-cg', 'lbfgs', 'liblinear'],
+                'random_state' : [0]
+            }],
+            scoring = 'f1',
+            n_jobs = -1,
+            verbose = 1
+        )
+        return gridSearch
+    
+    else:
+        model = None
+        if parameters:
+            setDefaultRandomState(parameters)
+            model = LogisticRegression(**parameters)
+        else:
+            model = LogisticRegression(random_state=0)
         
         return model
 
 
 def nearestCentroid(tuning=False, parameters=None):
     if tuning:
-        print('Nearest Centroid does not support tuning')
-    
+        model = NearestCentroid()
+
+        gridSearch = GridSearchCV(
+            estimator = model,
+            param_grid = [{
+                'metric' : ['cityblock', 'cosine', 'euclidean', 'manhattan']
+            }],
+            scoring = 'f1',
+            n_jobs = -1,
+            verbose = 1
+        )
+        return gridSearch
+        
     else:
         model = None
         if parameters:
@@ -93,16 +106,17 @@ def neuralNetwork(tuning=False, parameters=None):
             }],
             scoring = 'f1',
             n_jobs = -1,
-            verbose=1
+            verbose = 1
         )
         return gridSearch
     
     else:
         model = None
         if parameters:
+            setDefaultRandomState(parameters)
             model = MLPClassifier(**parameters)
         else:
-            model = MLPClassifier()
+            model = MLPClassifier(random_state=0)
         
         return model
 
@@ -114,24 +128,25 @@ def randomForestClassifier(tuning=False, parameters=None):
         gridSearch = GridSearchCV(
             estimator = model,
             param_grid = [{
-                'criterion' : ['gini', 'entropy'],
-                'max_depth': [10, 100, 1000],
-                'max_features' : [10, 100, 1000],
-                'n_estimators' : [10, 100, 1000],
+                'criterion' : ['entropy'],
+                'max_depth': [100, 1000],
+                'max_features' : [0.25],
+                'n_estimators' : [100, 500, 1000],
                 'random_state' : [0]
             }],
             scoring = 'f1',
             n_jobs = -1,
-            verbose=1
+            verbose = 1
         )
         return gridSearch
     
     else:
         model = None
         if parameters:
+            setDefaultRandomState(parameters)
             model = RandomForestClassifier(**parameters)
         else:
-            model = RandomForestClassifier()
+            model = RandomForestClassifier(random_state=0)
         
         return model
 
@@ -150,15 +165,21 @@ def svc(tuning=False, parameters=None):
             }],
             scoring = 'f1',
             n_jobs = -1,
-            verbose=1
+            verbose = 1
         )
         return gridSearch
     
     else:
         model = None
         if parameters:
+            setDefaultRandomState(parameters)
             model = SVC(**parameters)
         else:
-            model = SVC()
+            model = SVC(random_state=0)
 
         return model
+
+
+def setDefaultRandomState(parameters):
+    if 'random_state' not in parameters:
+        parameters.update( {'random_state' : 0} )
