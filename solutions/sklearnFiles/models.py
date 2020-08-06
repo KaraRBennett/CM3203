@@ -130,7 +130,7 @@ def randomForestClassifier(tuning=False, parameters=None):
             param_grid = [{
                 'criterion' : ['entropy'],
                 'max_depth': [100, 1000],
-                'max_features' : [0.25],
+                'max_features' : [0.5],
                 'n_estimators' : [100, 500, 1000],
                 'random_state' : [0]
             }],

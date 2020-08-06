@@ -6,3 +6,6 @@ datasets/2020/baselines/
 datasets/2019/datasets-old
 datasets/2019/datasets-v3/datasets/
 datasets/2020/datasets/
+
+*.pyc
+*.pdfgi

@@ -1,7 +1,10 @@
-import sklearnFiles.subtask1.evaluate as evaluate
 import readCorpus.binaryClassification as readCorpus 
+import sklearnFiles.subtask1.evaluate as evaluate
 import sklearnFiles.training as training
 
+from dataPreprocessing.cleanData import cleanText
+from sklearnFiles.generateReport import generateReport
+from sklearnFiles.featureSelectors import defineFeatureSelector
 from translateLabels.translateBCLabels import Word2Int
 
 import graphviz
@@ -19,29 +22,50 @@ from time import process_time
 
 
 def runScenario(scenario):
-    trainText, testText, trainLabels, testLabels = loadAndSplitData(scenario['trainingTextFiles'], scenario['trainingLabelFiles'])
+    trainingCorpusText, trainingCorpusLabels = loadAndCleanData(scenario['trainingTextFiles'], scenario['trainingLabelFiles'], scenario['stemmingMethod'])
+    trainText, testText, trainLabels, testLabels = splitDataset(trainingCorpusText, trainingCorpusLabels)
     foldedTrainingCorpus, foldedTestCorpus = kFoldSplit(trainText, trainLabels)
     trainCorpus = {'text' : trainText, 'labels' : trainLabels}
     testCorpus = {'text' : testText, 'labels' : testLabels}
+    featureSelector = defineFeatureSelector(scenario['featureSelection'], scenario['nFeatures'])
 
     if scenario['tuneModel'] == True:
-        tune(scenario['model'], scenario['vectoriser'], trainCorpus)
+        tune(scenario['model'], scenario['vectoriser'], featureSelector, trainCorpus)
     else:
-        model, vectoriser = train(scenario['model'], scenario['vectoriser'], foldedTrainingCorpus, foldedTestCorpus, testCorpus)
-    
+        model, vectoriser, predictions = train(
+            scenario['model'],
+            scenario['vectoriser'],
+            featureSelector,
+            foldedTrainingCorpus,
+            foldedTestCorpus,
+            testCorpus
+        )
+
+        if scenario['produceReport'] == True:
+            filename = model.__class__.__name__ + '_' + vectoriser.__class__.__name__
+            generateReport(predictions, testCorpus['labels'], testCorpus['text'], filename)
+
         if scenario['evaluateUnseenData'] == True:
-            evaluateUnseenData(model, vectoriser, scenario['filesToEvaluate'], scenario['evaluationFilename'])
+            evaluateUnseenData(scenario['stemmingMethod'], model, vectoriser, featureSelector, scenario['filesToEvaluate'], scenario['evaluationFilename'])
 
         if type(model).__name__ == "DecisionTreeClassifier" and scenario['treeGraphFilename'] != None:
             captureDecisionTreeGraph(model, vectoriser, scenario['treeGraphFilename'])
     
 
-def loadAndSplitData(textFilesDirectory, labelFilesDirectory):
+def loadAndCleanData(textFilesDirectory, labelFilesDirectory, stemmingMethod):
     print('Loading training data')
     trainingCorpusText = readCorpus.readText(textFilesDirectory)
     trainingCorpusLabels = readCorpus.readLabels(labelFilesDirectory)
     trainingCorpusLabels['label'] = Word2Int(trainingCorpusLabels['label'])
 
+    print('Cleaning data')
+    for i in range(len(trainingCorpusText['text'])):
+        trainingCorpusText['text'][i] = cleanText(trainingCorpusText['text'][i], stemmingMethod)
+    
+    return trainingCorpusText, trainingCorpusLabels
+
+
+def splitDataset(trainingCorpusText, trainingCorpusLabels):
     # Get test train split
     print('Preparing test sets\n')
     trainText, testText, trainLabels, testLabels = train_test_split(
@@ -50,7 +74,6 @@ def loadAndSplitData(textFilesDirectory, labelFilesDirectory):
         test_size = 0.25,
         random_state = 0
     )
-
     return trainText, testText, trainLabels, testLabels
 
 
@@ -80,12 +103,19 @@ def kFoldSplit(trainText, trainLabels):
     return foldedTrainingCorpus, foldedTestCorpus
 
 
-def tune(model, vectoriser, trainCorpus):
-    training.tuneModel(model, vectoriser, trainCorpus)
+def tune(model, vectoriser, featureSelector, trainCorpus):
+    training.tuneModel(model, vectoriser, featureSelector, trainCorpus)
 
 
-def train(model, vectoriser, foldedTrainingCorpus, foldedTestCorpus, testCorpus):
-    model, vectoriser, foldedScore, score = training.trainModel(model, vectoriser, foldedTrainingCorpus, foldedTestCorpus, testCorpus)
+def train(model, vectoriser, featureSelector, foldedTrainingCorpus, foldedTestCorpus, testCorpus):
+    model, vectoriser, featureSelector, foldedScore, score, predictions = training.trainModel(
+        model,
+        vectoriser,
+        featureSelector,
+        foldedTrainingCorpus,
+        foldedTestCorpus,
+        testCorpus
+    )
 
     # Print results
     for i, s in enumerate(foldedScore):
@@ -93,14 +123,20 @@ def train(model, vectoriser, foldedTrainingCorpus, foldedTestCorpus, testCorpus)
     print('\nMean F₁ of all folds: {0:.4f}'.format(mean(foldedScore)))
     print('\nF₁ Score for test set: {0:.4f}'.format(score))
 
-    return model, vectoriser
+    return model, vectoriser, predictions
 
 
-def evaluateUnseenData(model, vectoriser, evaluationFiles, evaluationFilename):
+def evaluateUnseenData(stemmingMethod, model, vectoriser, featureSelector, evaluationFiles, evaluationFilename):
     print('\n\nPerforming Evaluation')
     start = process_time()
     data = readCorpus.readText(evaluationFiles)
-    evaluate.unseenData(model, vectoriser, data, evaluationFilename)
+
+    print('Cleaning data')
+    for i in range(len(data['text'])):
+        data['text'][i] = cleanText(data['text'][i], stemmingMethod)
+
+    print('Predicting Labels')
+    evaluate.unseenData(model, vectoriser, featureSelector, data, evaluationFilename)
     finish = process_time()
     print('Evaluation completed in: {0:.2f}'.format(finish-start))
 

@@ -1,8 +1,12 @@
 from translateLabels.translateBCLabels import Int2Word
 
-def unseenData(model, vectoriser, data, outputFile='Evaluation'):
+def unseenData(model, vectoriser, featureSelector, data, outputFile='Evaluation'):
     performGlovePreprocessing(vectoriser, data)    
     features = vectoriser.transform(data['text'])
+
+    if featureSelector:
+        features = featureSelector.transform(features)
+        
     predictions = model.predict(features)
 
     assertionError = 'Mismatched length of model predictions {0} and input data {1}'.format(len(predictions), len(data['text']))
@@ -18,6 +22,7 @@ def performGlovePreprocessing(vectoriser, data):
 
 
 def createOutputFile(dataIDs, predictions, outputFile):
+    print('Creating evaluation file')
     output = [] 
     currentID = dataIDs[0]
     sentenceNo = 0

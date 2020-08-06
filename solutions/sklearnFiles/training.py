@@ -5,69 +5,50 @@ from sklearn.metrics import f1_score
 
 
 # Method to train a given model using K Folds
-def trainModel(model, vectoriser, foldedTrain, foldedTest, test):
+def trainModel(model, vectoriser, featureSelector, foldedTrain, foldedTest, test):
     start = processTime()
 
     foldedScore = []
 
-    # Train model on each set of the K Fold and capture the F₁ score
-    if vectoriser.__class__.__name__ == 'EmbeddingTransformer':
-        trainWithEmbeddingTransformer(model, vectoriser, foldedTrain, foldedTest, foldedScore)
-    else:
-        trainWithSklearnVectoriser(model, vectoriser, foldedTrain, foldedTest, foldedScore)
+    for i in range(len(foldedTrain['text'])):
+        print('Performing folded train iteraition {0}'.format(i + 1))
+
+        vectoriser, trainFeatures = generateTrainFeatures(vectoriser, foldedTrain['text'][i])
+        testFeatures = generateTestFeatures(vectoriser, foldedTest['text'][i])
+
+        if featureSelector:
+            trainFeatures = featureSelector.fit_transform(trainFeatures, foldedTrain['labels'][i])
+            testFeatures = featureSelector.transform(testFeatures)
+        
+        model = model.fit(trainFeatures, foldedTrain['labels'][i])
+        testPrediction = model.predict(testFeatures)
+        score = f1_score(foldedTest['labels'][i], testPrediction)
+        foldedScore.append(score)
+
     
-    # Print results from testing
     print('\nTesting model against test set')
-    testFeatures = vectoriser.transform(test['text'])
+    testFeatures = generateTestFeatures(vectoriser, test['text'])
+
+    if featureSelector:
+        testFeatures = featureSelector.transform(testFeatures)
+
     testPrediction = model.predict(testFeatures)
     testScore = f1_score(test['labels'], testPrediction)
 
-    print('\nTime to train: {0}\n\n'.format(processTime(start)))
-    
-
-    return model, vectoriser, foldedScore, testScore
-
-
-def trainWithSklearnVectoriser(model, vectoriser, foldedTrain, foldedTest, foldedScore):
-    for i in range(len(foldedTrain['text'])):
-        print('Performing folded train iteration {0}'.format(i + 1))
-        trainFeatures = vectoriser.fit_transform(foldedTrain['text'][i])
-        testFeatures = vectoriser.transform(foldedTest['text'][i])
-
-        model = model.fit(trainFeatures, foldedTrain['labels'][i])
-
-        testPrediction = model.predict(testFeatures)
-        score = f1_score(foldedTest['labels'][i], testPrediction)
-
-        foldedScore.append(score)
-
-
-def trainWithEmbeddingTransformer(model, vectoriser, foldedTrain, foldedTest, foldedScore):
-    for i in range(len(foldedTrain['text'])):
-        print('Performing folded train iteration {0}'.format(i + 1))
-
-        for j in range(len(foldedTrain['text'][i])):
-            foldedTrain['text'][i][j] = (foldedTrain['text'][i][j]).lower()
-      
-        for j in range(len(foldedTest['text'][i])):
-            foldedTest['text'][i][j] = (foldedTest['text'][i][j]).lower()
-        
-        trainFeatures = vectoriser.transform(foldedTrain['text'][i])
-        testFeatures = vectoriser.transform(foldedTest['text'][i])
-
-        model = model.fit(trainFeatures, foldedTrain['labels'][i])
-        testPrediction = model.predict(testFeatures)
-
-        score = f1_score(foldedTest['labels'][i], testPrediction)
-        foldedScore.append(score)   
+    print('\nTime to train: {0}\n\n'.format(processTime(start)))  
+    return model, vectoriser, featureSelector, foldedScore, testScore, testPrediction
 
 
 # Method that tunes an implemented GridSearchCV object (model) using K Folds
-def tuneModel(model, vectoriser, trainCorpus, writeResults=True):
+def tuneModel(model, vectoriser, featureSelector, trainCorpus, writeResults=True):
     print('Tuning model\n')
     start = processTime()
 
-    trainFeatures = selectTransformMethod(vectoriser, trainCorpus['text'])
+    vectoriser, trainFeatures = generateTrainFeatures(vectoriser, trainCorpus['text'])
+
+    if featureSelector:
+        trainFeatures = featureSelector.fit_transform(trainFeatures)
+
     model = model.fit(trainFeatures, trainCorpus['labels'])
     
     print('\nTuning complete')
@@ -91,11 +72,19 @@ def tuneModel(model, vectoriser, trainCorpus, writeResults=True):
         print('Full results written to: ' + filename)
 
 
-def selectTransformMethod(vectoriser, transformObject):
+def generateTrainFeatures(vectoriser, transformObject):
     if vectoriser.__class__.__name__ == 'EmbeddingTransformer':
         for i in range(len(transformObject)):
             transformObject[i] = (transformObject[i]).lower()
-        return vectoriser.transform(transformObject) 
+        return vectoriser, vectoriser.transform(transformObject) 
 
     else:
-        return vectoriser.fit_transform(transformObject)
+        return vectoriser, vectoriser.fit_transform(transformObject)
+
+
+def generateTestFeatures(vectoriser, transformObject):
+    if vectoriser.__class__.__name__ == 'EmbeddingTransformer':
+        for i in range(len(transformObject)):
+            transformObject[i] = (transformObject[i]).lower()
+    
+    return vectoriser.transform(transformObject)

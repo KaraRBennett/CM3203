@@ -23,47 +23,73 @@ trainingTextFiles = '../datasets/2019/datasets-v3/datasets/train-articles'
 trainingLabelFiles = '../datasets/2019/datasets-v3/datasets/train-labels-SLC'
 
 
+# stemmingMethod is a string that determines if a stemming method
+# should be utilised during data cleaning. Implemented stemming
+# methods can be viewed in dataPreprocessing/cleanData.py. Set this 
+# variable to None if you do not want to perform word stemming.
+
+stemmingMethod = 'f'
+
+
 # tuneModel sets whether or not to use GridSearchCV to tune the model
-# using the specific paramters selected for each model in models.py.
+# using the specific parameters selected for each model in models.py.
 # To change what parameters are evaluated using GridSearchCV adusjt
 # the code in sklearnFiles/models.py.
 
-tuneModel = True
+tuneModel = False
 
 
 # model defines the model that will be training as part of the
 # scenario. Avalible models can be viewed in sklearnFiles/models.py.
 # If you wish to provide the model with custom parameters create a 
-# dictionary of the desired paramteres using modelParamters.
+# dictionary of the desired parametres using modelParamters.
 
-modelParamateres = {'max_iter': 100}
-model = models.svc(tuneModel, modelParamateres)
+modelParamateres = None
+t = {
+    'C':			0.1,
+    'kernel':			'linear',
+    'max_iter':		1000
+
+}
+model = models.nearestCentroid(tuneModel, modelParamateres)
 
 
 # vectoriser defines the type of vectorisation that will be used to
-# numerically represent the textual data. Avalible vectorisers can be
-# viewed in sklearnFiles/vectorisers.py
+# numerically represent the textual data. Available vectorisers can
+# be viewed in sklearnFiles/vectorisers.py
 
-vectoriser = vectorisers.defaultCount() 
+vectoriser = vectorisers.defaultTfidf()
 
 
-# evaluateUnseenData is a flag that when set to true will produce an 
+featureSelection = None
+nFeatures = 20
+
+
+# produceReport os a flag that when set to True will produce a csv
+# file that contains up to 50 example sentences that were correctly
+# labelled for both labels and 50 example sentences that were 
+# incorrectly labelled for both both labels.
+
+produceReport = False
+
+
+# evaluateUnseenData is a flag that when set to True will produce an 
 # evaluation file named after this specific scenario in the results
 # folder. evaluationTextFiles is a string that provides the location 
 # of the directories holding all the text files to be evaluated.
 # evaluationFilename is a string that will be used to name the
 # produced file.
 
-evaluateUnseenData = True
-filesToEvaluate = '../datasets/2019/datasets-v3/datasets/train-articles'
-evaluationFilename = 'evaluation'
+evaluateUnseenData = False
+filesToEvaluate = '../datasets/2019/datasets-v3/datasets/test-articles'
+evaluationFilename = ''
 
 
 # treeGraphFilename is a string that determines the name of the graph
 # files that are automatically produced in the model being used is a 
 # decision tree and tuneModel is false
 
-treeGraphFilename = 'decisionTreeGraph'
+treeGraphFilename = None# '3depthDecisionTreeGraph'
 
 
 
@@ -72,10 +98,13 @@ treeGraphFilename = 'decisionTreeGraph'
 scenario = {
     'trainingTextFiles' : trainingTextFiles,
     'trainingLabelFiles' : trainingLabelFiles,
+    'stemmingMethod' : stemmingMethod,
     'tuneModel' : tuneModel,
-    'modelParamters' : modelParamateres,
     'model' : model,
     'vectoriser' : vectoriser,
+    'featureSelection' : featureSelection,
+    'nFeatures' : nFeatures,
+    'produceReport' : produceReport,
     'evaluateUnseenData' : evaluateUnseenData,
     'filesToEvaluate' : filesToEvaluate,
     'evaluationFilename' : evaluationFilename,
