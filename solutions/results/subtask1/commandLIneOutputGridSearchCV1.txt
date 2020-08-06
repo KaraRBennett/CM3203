@@ -1,0 +1,442 @@
+
+(base) C:\Users\Kara>D:
+
+(base) D:\>cd Kara\University\Year 3\CM3203\Codebase\solutions
+
+(base) D:\Kara\University\Year 3\CM3203\Codebase\solutions>python -W ignore subtask1_sklearn_allScenarios.py
+Using TensorFlow backend.
+Preparing Scenarios
+
+
+
+Running Scenario 'DecisionTreeClassifier, CountVectorizer'                              (1/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 36 candidates, totalling 108 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  26 tasks      | elapsed:   16.9s
+[Parallel(n_jobs=-1)]: Done 108 out of 108 | elapsed:  1.3min finished
+
+Tuning complete
+Time to tune: 1min 20s
+
+
+Best F₁ Score: 0.4416
+Best Paramteres: -
+* criterion: gini
+* max_depth: 1000
+* max_features: 0.1
+* random_state: 0
+* splitter: random
+
+
+Full results written to: results/subtask1/GridSearch-DecisionTreeClassifier-CountVectorizer.csv
+
+
+
+Completed Scenario 'DecisionTreeClassifier, CountVectorizer' in 1min 23s
+
+
+
+
+
+
+Running Scenario 'LogisticRegression, CountVectorizer'                          (2/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 15 candidates, totalling 45 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  45 out of  45 | elapsed:    6.9s finished
+
+Tuning complete
+Time to tune: 7.75s
+
+
+Best F₁ Score: 0.4042
+Best Paramteres: -
+* C: 10
+* random_state: 0
+* solver: liblinear
+
+
+Full results written to: results/subtask1/GridSearch-LogisticRegression-CountVectorizer.csv
+
+
+
+Completed Scenario 'LogisticRegression, CountVectorizer' in 7.85s
+
+
+
+
+
+
+Running Scenario 'NearestCentroid, CountVectorizer'                             (3/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 4 candidates, totalling 12 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   2 out of  12 | elapsed:    0.0s remaining:    0.6s
+[Parallel(n_jobs=-1)]: Done  12 out of  12 | elapsed:    1.4s finished
+
+Tuning complete
+Time to tune: 1.85s
+
+
+Best F₁ Score: 0.4937
+Best Paramteres: -
+* metric: cosine
+
+
+Full results written to: results/subtask1/GridSearch-NearestCentroid-CountVectorizer.csv
+
+
+
+Completed Scenario 'NearestCentroid, CountVectorizer' in 1.96s
+
+
+
+
+
+
+Running Scenario 'SVC, CountVectorizer'                         (4/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 45 candidates, totalling 135 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  26 tasks      | elapsed:   15.8s
+[Parallel(n_jobs=-1)]: Done 135 out of 135 | elapsed:  1.4min finished
+
+Tuning complete
+Time to tune: 1min 24s
+
+
+Best F₁ Score: 0.4352
+Best Paramteres: -
+* C: 0.1
+* kernel: sigmoid
+* max_iter: 1000
+* random_state: 0
+
+
+Full results written to: results/subtask1/GridSearch-SVC-CountVectorizer.csv
+
+
+
+Completed Scenario 'SVC, CountVectorizer' in 1min 24s
+
+
+
+
+
+
+Running Scenario 'DecisionTreeClassifier, TfidfVectorizer'                              (5/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 36 candidates, totalling 108 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  26 tasks      | elapsed:   16.6s
+[Parallel(n_jobs=-1)]: Done 108 out of 108 | elapsed:  1.3min finished
+
+Tuning complete
+Time to tune: 1min 22s
+
+
+Best F₁ Score: 0.4274
+Best Paramteres: -
+* criterion: gini
+* max_depth: 1000
+* max_features: 0.25
+* random_state: 0
+* splitter: best
+
+
+Full results written to: results/subtask1/GridSearch-DecisionTreeClassifier-TfidfVectorizer.csv
+
+
+
+Completed Scenario 'DecisionTreeClassifier, TfidfVectorizer' in 1min 22s
+
+
+
+
+
+
+Running Scenario 'LogisticRegression, TfidfVectorizer'                          (6/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 15 candidates, totalling 45 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  45 out of  45 | elapsed:    4.1s finished
+
+Tuning complete
+Time to tune: 5.02s
+
+
+Best F₁ Score: 0.2738
+Best Paramteres: -
+* C: 10
+* random_state: 0
+* solver: newton-cg
+
+
+Full results written to: results/subtask1/GridSearch-LogisticRegression-TfidfVectorizer.csv
+
+
+
+Completed Scenario 'LogisticRegression, TfidfVectorizer' in 5.15s
+
+
+
+
+
+
+Running Scenario 'NearestCentroid, TfidfVectorizer'                             (7/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 4 candidates, totalling 12 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   2 out of  12 | elapsed:    0.1s remaining:    1.0s
+[Parallel(n_jobs=-1)]: Done  12 out of  12 | elapsed:    2.0s finished
+
+Tuning complete
+Time to tune: 2.59s
+
+
+Best F₁ Score: 0.5248
+Best Paramteres: -
+* metric: cosine
+
+
+Full results written to: results/subtask1/GridSearch-NearestCentroid-TfidfVectorizer.csv
+
+
+
+Completed Scenario 'NearestCentroid, TfidfVectorizer' in 2.74s
+
+
+
+
+
+
+Running Scenario 'SVC, TfidfVectorizer'                         (8/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 45 candidates, totalling 135 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  26 tasks      | elapsed:   14.3s
+[Parallel(n_jobs=-1)]: Done 135 out of 135 | elapsed:  1.4min finished
+
+Tuning complete
+Time to tune: 1min 25s
+
+
+Best F₁ Score: 0.4682
+Best Paramteres: -
+* C: 0.1
+* kernel: linear
+* max_iter: 1000
+* random_state: 0
+
+
+Full results written to: results/subtask1/GridSearch-SVC-TfidfVectorizer.csv
+
+
+
+Completed Scenario 'SVC, TfidfVectorizer' in 1min 25s
+
+
+
+
+
+
+Running Scenario 'DecisionTreeClassifier, EmbeddingTransformer'                         (9/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 36 candidates, totalling 108 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done 108 out of 108 | elapsed:    1.6s finished
+
+Tuning complete
+Time to tune: 2.58s
+
+
+Best F₁ Score: 0.3870
+Best Paramteres: -
+* criterion: entropy
+* max_depth: 100
+* max_features: 0.25
+* random_state: 0
+* splitter: best
+
+
+Full results written to: results/subtask1/GridSearch-DecisionTreeClassifier-EmbeddingTransformer.csv
+
+
+
+Completed Scenario 'DecisionTreeClassifier, EmbeddingTransformer' in 2.70s
+
+
+
+
+
+
+Running Scenario 'LogisticRegression, EmbeddingTransformer'                             (10/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 15 candidates, totalling 45 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  22 out of  45 | elapsed:    0.4s remaining:    0.4s
+[Parallel(n_jobs=-1)]: Done  45 out of  45 | elapsed:    0.8s finished
+
+Tuning complete
+Time to tune: 1.74s
+
+
+Best F₁ Score: 0.1190
+Best Paramteres: -
+* C: 10
+* random_state: 0
+* solver: liblinear
+
+
+Full results written to: results/subtask1/GridSearch-LogisticRegression-EmbeddingTransformer.csv
+
+
+
+Completed Scenario 'LogisticRegression, EmbeddingTransformer' in 1.88s
+
+
+
+
+
+
+Running Scenario 'NearestCentroid, EmbeddingTransformer'                                (11/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 4 candidates, totalling 12 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   2 out of  12 | elapsed:    0.0s remaining:    0.1s
+[Parallel(n_jobs=-1)]: Done  12 out of  12 | elapsed:    0.1s finished
+
+Tuning complete
+Time to tune: 0.89s
+
+
+Best F₁ Score: 0.4725
+Best Paramteres: -
+* metric: cosine
+
+
+Full results written to: results/subtask1/GridSearch-NearestCentroid-EmbeddingTransformer.csv
+
+
+
+Completed Scenario 'NearestCentroid, EmbeddingTransformer' in 1.07s
+
+
+
+
+
+
+Running Scenario 'SVC, EmbeddingTransformer'                            (12/12)
+
+
+
+Loading training data
+Preparing test sets
+
+Tuning model
+
+Fitting 3 folds for each of 45 candidates, totalling 135 fits
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 12 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  28 tasks      | elapsed:    5.2s
+[Parallel(n_jobs=-1)]: Done 135 out of 135 | elapsed:   25.2s finished
+
+Tuning complete
+Time to tune: 26.64s
+
+
+Best F₁ Score: 0.4673
+Best Paramteres: -
+* C: 0.01
+* kernel: linear
+* max_iter: 1000
+* random_state: 0
+
+
+Full results written to: results/subtask1/GridSearch-SVC-EmbeddingTransformer.csv
+
+
+
+Completed Scenario 'SVC, EmbeddingTransformer' in 26.77s
+
+
+
+
+(base) D:\Kara\University\Year 3\CM3203\Codebase\solutions>

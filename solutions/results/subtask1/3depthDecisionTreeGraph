@@ -1,0 +1,29 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label=<America &le; 0.5<br/>gini = 0.401<br/>samples = 8705<br/>value = [6286, 2419]<br/>class = non-propaganda>, fillcolor="#efb185"] ;
+1 [label=<Church &le; 0.5<br/>gini = 0.398<br/>samples = 8616<br/>value = [6251, 2365]<br/>class = non-propaganda>, fillcolor="#efb184"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label=<Trump &le; 0.5<br/>gini = 0.393<br/>samples = 8305<br/>value = [6077, 2228]<br/>class = non-propaganda>, fillcolor="#efaf82"] ;
+1 -> 2 ;
+3 [label=<gini = 0.387<br/>samples = 7951<br/>value = [5869, 2082]<br/>class = non-propaganda>, fillcolor="#eeae7f"] ;
+2 -> 3 ;
+4 [label=<gini = 0.485<br/>samples = 354<br/>value = [208, 146]<br/>class = non-propaganda>, fillcolor="#f7d9c4"] ;
+2 -> 4 ;
+5 [label=<bishops &le; 0.5<br/>gini = 0.493<br/>samples = 311<br/>value = [174, 137]<br/>class = non-propaganda>, fillcolor="#f9e4d5"] ;
+1 -> 5 ;
+6 [label=<gini = 0.486<br/>samples = 286<br/>value = [167, 119]<br/>class = non-propaganda>, fillcolor="#f8dbc6"] ;
+5 -> 6 ;
+7 [label=<gini = 0.403<br/>samples = 25<br/>value = [7, 18]<br/>class = propaganda>, fillcolor="#86c3ef"] ;
+5 -> 7 ;
+8 [label=<Trump &le; 0.5<br/>gini = 0.477<br/>samples = 89<br/>value = [35, 54]<br/>class = propaganda>, fillcolor="#b9ddf6"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+9 [label=<Iran &le; 0.5<br/>gini = 0.498<br/>samples = 75<br/>value = [35, 40]<br/>class = propaganda>, fillcolor="#e6f3fc"] ;
+8 -> 9 ;
+10 [label=<gini = 0.499<br/>samples = 67<br/>value = [35, 32]<br/>class = non-propaganda>, fillcolor="#fdf4ee"] ;
+9 -> 10 ;
+11 [label=<gini = 0.0<br/>samples = 8<br/>value = [0, 8]<br/>class = propaganda>, fillcolor="#399de5"] ;
+9 -> 11 ;
+12 [label=<gini = 0.0<br/>samples = 14<br/>value = [0, 14]<br/>class = propaganda>, fillcolor="#399de5"] ;
+8 -> 12 ;
+}
