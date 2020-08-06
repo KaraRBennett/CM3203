@@ -26,10 +26,10 @@ def unseenData(model, vocab, data, outputFile='evaluation.txt'):
             tokenised = word_tokenize(data['text'][i])
             tensor = torch.LongTensor([vocab[token] for token in tokenised])
             tensor = tensor.unsqueeze(1)
+            tensor = tensor.to(torch.device('cuda'))
 
             if not len(tensor.data) == 0:
                 prediction = torch.sigmoid(model(tensor))
-
                 outputString += Int2Word(round(prediction.item())) + "\n"
             
             else:
@@ -39,6 +39,8 @@ def unseenData(model, vocab, data, outputFile='evaluation.txt'):
 
     print(len(output))
 
+    if outputFile[-4:] != '.txt':
+        outputFile += '.txt'
     file = open('results/subtask1/pytorch-' + outputFile, 'w')
     file.writelines(output)
     file.close() 

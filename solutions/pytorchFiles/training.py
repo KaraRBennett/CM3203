@@ -1,22 +1,23 @@
 import torch
 
-def train(model, trainingIterator, optimiser, lossFunction, trainingIterations):
+def train(model, trainingIterator, optimiser, trainingIterations):
     for i in range(trainingIterations):
-        trainingLoss, trainingAccuracy = trainIteration(model, trainingIterator, optimiser, lossFunction)
+        trainingLoss, trainingAccuracy = trainIteration(model, trainingIterator, optimiser)
         print('Iteration: {0:02}\tTraining Loss: {1:.3f}\tTraining Accuracy: {2:.2f}%'.format(i+1, trainingLoss, trainingAccuracy))
 
 
-def trainIteration(model, iterator, optimiser, lossFunction):
+def trainIteration(model, iterator, optimiser):
     iterationLoss = 0
     iterationAccuracy = 0
 
     model.train()
 
     for batch in iterator:
-        if not len(batch.text.data) == 0:
+        if batch.text.size()[1] == 64: #not len(batch.text.data) == 0 or batch.text.:
             optimiser.zero_grad()
             predictions = model(batch.text).squeeze(1)
-            loss = lossFunction(predictions, batch.label)
+            lossCriterion = torch.nn.BCEWithLogitsLoss()
+            loss = lossCriterion(predictions, batch.label)
             
             roundedPredictions = torch.round(torch.sigmoid(predictions))
             correct = (roundedPredictions == batch.label).float()
@@ -28,10 +29,10 @@ def trainIteration(model, iterator, optimiser, lossFunction):
             iterationLoss += loss.item()
             iterationAccuracy += accuracy.item()
     
-    return iterationAccuracy / len(iterator), iterationAccuracy / len(iterator)
+    return iterationLoss / len(iterator), iterationAccuracy / len(iterator)
 
 
-def testAccuracy(model, iterator, lossFunction):
+def testAccuracy(model, iterator):
     model.eval()
 
     iterationLoss = 0
@@ -42,7 +43,8 @@ def testAccuracy(model, iterator, lossFunction):
         for batch in iterator:
             if not len(batch.text.data) == 0:
                 predictions = model(batch.text).squeeze(1)
-                loss = lossFunction(predictions, batch.label)
+                lossCriterion = torch.nn.BCEWithLogitsLoss()
+                loss = lossCriterion(predictions, batch.label)
 
                 roundedPredictions = torch.round(torch.sigmoid(predictions)) 
                 correct = (roundedPredictions == batch.label).float()
